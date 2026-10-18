@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>El sorteo</title>
+<meta name="description" content="Preparación de oposiciones de Matemáticas 2027: temas, sorteo, problemas.">
+<meta name="theme-color" content="#f3eee3">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#f3eee3; --papel2:#ebe4d5; --tarjeta:#fbf8f1; --tinta:#1f1b16; --tinta2:#5b5348; --tinta3:#8d8476;
+  --linea:#d9d0bf; --laton:#b0893a; --ok:#3b6a4c; --aviso:#9a4a24; --bola:#2f4f6b;
+  --sombra:0 1px 0 rgba(31,27,22,.06),0 6px 18px -10px rgba(31,27,22,.25);
+  --serif:"Fraunces",Georgia,serif; --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --papel:#16140f; --papel2:#1e1b15; --tarjeta:#221f18; --tinta:#efe8da; --tinta2:#b9b0a0; --tinta3:#857d6f;
+  --linea:#363127; --laton:#d0a957; --ok:#7fb08d; --aviso:#e08a5e; --bola:#8fb3d4;
+  --sombra:0 1px 0 rgba(0,0,0,.3),0 8px 20px -12px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --papel:#16140f; --papel2:#1e1b15; --tarjeta:#221f18; --tinta:#efe8da; --tinta2:#b9b0a0; --tinta3:#857d6f;
+  --linea:#363127; --laton:#d0a957; --ok:#7fb08d; --aviso:#e08a5e; --bola:#8fb3d4;
+  --sombra:0 1px 0 rgba(0,0,0,.3),0 8px 20px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--sans);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--papel) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea);padding-top:env(safe-area-inset-top)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.marca{font-family:var(--serif);font-size:1.35rem;font-weight:600}
+.marca small{font-family:var(--sans);font-weight:400;font-size:.75rem;color:var(--tinta3);margin-left:8px;letter-spacing:.06em;text-transform:uppercase}
+.icobtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--linea);background:var(--tarjeta);display:grid;place-items:center}
+.icobtn svg{width:20px;height:20px;stroke:var(--tinta2);fill:none;stroke-width:1.6}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--tarjeta);border-top:1px solid var(--linea);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:64px}
+nav.tabs button{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.72rem;color:var(--tinta3);letter-spacing:.03em}
+nav.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
+nav.tabs button.on{color:var(--tinta)}
+nav.tabs button.on svg{stroke:var(--laton)}
+h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0}
+h2.sec{font-size:1.05rem;margin:28px 0 10px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+h2.sec span{font-family:var(--sans);font-weight:400;font-size:.78rem;color:var(--tinta3)}
+.eyebrow{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3)}
+.card{background:var(--tarjeta);border:1px solid var(--linea);border-radius:var(--r);box-shadow:var(--sombra)}
+.pad{padding:16px}
+.muted{color:var(--tinta2)} .dim{color:var(--tinta3)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--tinta);background:var(--tinta);color:var(--papel);border-radius:999px;padding:10px 18px;font-weight:500;font-size:.95rem;display:inline-flex;align-items:center;gap:8px}
+.btn.sec{background:transparent;color:var(--tinta);border-color:var(--linea)}
+.btn.peq{padding:7px 13px;font-size:.85rem}
+.btn.peligro{background:transparent;color:var(--aviso);border-color:color-mix(in srgb,var(--aviso) 45%,transparent)}
+.btn:disabled{opacity:.4}
+.fila{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;padding:3px 9px;border-radius:999px;border:1px solid var(--linea);color:var(--tinta2);white-space:nowrap;background:transparent}
+.chip.on{background:var(--tinta);color:var(--papel);border-color:var(--tinta)}
+.chip.lucir{border-color:color-mix(in srgb,var(--laton) 60%,transparent);color:var(--laton)}
+.pista{font-size:.8rem;color:var(--tinta3)}
+.barra{height:10px;border-radius:999px;background:var(--papel2);margin:12px 0 10px;position:relative;overflow:hidden}
+.barra b{position:absolute;inset:0 auto 0 0;background:var(--laton);border-radius:999px;transition:width .5s}
+.barra i{position:absolute;inset:0 auto 0 0;background:color-mix(in srgb,var(--laton) 28%,transparent);border-radius:999px}
+.saludo{padding:22px 0 4px}
+.saludo h1{font-size:1.65rem;line-height:1.15}
+.saludo p{margin:6px 0 0;color:var(--tinta2)}
+.grande{font-family:var(--serif);font-size:2.1rem;font-weight:600;line-height:1}
+.cifras{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.lista{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:12px;align-items:center;padding:12px 14px;text-align:left;width:100%;background:var(--tarjeta);border:1px solid var(--linea);border-radius:12px}
+.item .n{font-family:var(--mono);font-size:.85rem;color:var(--tinta3);min-width:26px}
+.item .t{flex:1;min-width:0}
+.item .t b{font-weight:500;display:block;font-size:.95rem;line-height:1.3}
+.item .t small{color:var(--tinta3);font-size:.78rem}
+.item.fuera{opacity:.62;background:transparent}
+.puntos{display:flex;gap:3px}
+.puntos i{width:7px;height:7px;border-radius:50%;background:var(--linea)}
+.puntos i.s{background:var(--laton)}
+.seg{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px}
+.seg button{border:1px solid var(--linea);background:transparent;border-radius:10px;padding:8px 2px;font-size:.72rem;line-height:1.2;color:var(--tinta2)}
+.seg button.on{background:var(--laton);border-color:var(--laton);color:#fff}
+.libros{display:grid;grid-template-columns:90px 1fr;gap:6px 12px;font-size:.9rem;margin-top:6px}
+.libros dt{color:var(--tinta3);font-size:.78rem;padding-top:2px}
+.libros dd{margin:0}
+textarea,input[type=text],input[type=number],input[type=date],select{width:100%;border:1px solid var(--linea);background:var(--papel);border-radius:10px;padding:9px 11px}
+textarea{min-height:76px;resize:vertical}
+label.campo{display:block;margin-top:12px;font-size:.8rem;color:var(--tinta2)}
+label.campo > *{margin-top:4px}
+.hoja{position:fixed;inset:0;z-index:50;background:rgba(20,16,10,.42);display:none;align-items:flex-end;justify-content:center}
+.hoja.ver{display:flex}
+.hoja .panel{background:var(--papel);width:100%;max-width:640px;max-height:92dvh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));animation:sube .22s ease-out}
+@keyframes sube{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+.panel .cab{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.panel h3{font-size:1.2rem;line-height:1.25}
+.cerrar{border:0;background:none;font-size:1.6rem;line-height:1;color:var(--tinta3);padding:0 4px}
+.bolas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 8px}
+.bolaw{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.bola{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-weight:500;font-size:1.25rem;color:var(--tinta);background:radial-gradient(circle at 35% 30%,#fff 0 18%,#f1ead9 40%,#d8ccb2 100%);box-shadow:inset -4px -6px 10px rgba(0,0,0,.12),0 4px 10px -4px rgba(0,0,0,.35);opacity:0;transform:translateY(-24px) scale(.6)}
+.bola.cae{animation:cae .5s cubic-bezier(.3,1.5,.5,1) forwards}
+@keyframes cae{to{opacity:1;transform:none}}
+.bola.mia{background:radial-gradient(circle at 35% 30%,#fff 0 14%,#f2d896 45%,#c9a24e 100%)}
+.bolaw small{font-size:.72rem;color:var(--tinta2);line-height:1.25}
+.bolaw button{border:1px solid var(--linea);background:var(--tarjeta);border-radius:999px;font-size:.75rem;padding:4px 10px}
+.reloj{font-family:var(--mono);font-size:3rem;text-align:center;margin:18px 0 6px;letter-spacing:.02em}
+.sellos{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}
+.sello{flex:0 0 auto;width:74px;text-align:center;font-size:.68rem;color:var(--tinta3);line-height:1.2}
+.sello .m{width:52px;height:52px;margin:0 auto 6px;border-radius:50%;border:1.5px dashed var(--linea);display:grid;place-items:center;font-family:var(--serif);font-size:1.1rem;color:var(--tinta3)}
+.sello.si{color:var(--tinta2)}
+.sello.si .m{border:0;background:radial-gradient(circle at 35% 30%,#f7e3a8,#c9a24e 70%,#9c7a2f);color:#3b2c0c;box-shadow:0 3px 8px -3px rgba(0,0,0,.4)}
+.aviso-suave{font-size:.85rem;color:var(--tinta2);background:var(--papel2);border-radius:10px;padding:10px 12px;margin-top:12px}
+.tabla{width:100%;border-collapse:collapse;font-size:.88rem}
+.bloq{margin-bottom:12px}
+.bloq h3{font-size:1rem;margin-bottom:6px}
+.bloq .r{display:grid;grid-template-columns:86px 1fr;gap:4px 10px;font-size:.86rem;padding:3px 0}
+.bloq .r span:first-child{color:var(--tinta3);font-size:.75rem;padding-top:2px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--tinta);color:var(--papel);padding:9px 16px;border-radius:999px;font-size:.88rem;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.ver{opacity:1}
+.vacio{padding:18px;text-align:center;color:var(--tinta3);font-size:.9rem}
+.buscar{margin:10px 0}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="marca">El sorteo<small>206 · 2027</small></div>
+  <div class="fila">
+    <button class="icobtn" id="bSorteo" aria-label="Sacar bolas"><svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="4"/><circle cx="16" cy="9" r="4"/><circle cx="12" cy="16" r="4"/></svg></button>
+    <button class="icobtn" id="bAjustes" aria-label="Ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></button>
+  </div>
+</div></header>
+
+<main class="wrap" id="vista"></main>
+
+<nav class="tabs"><div class="wrap">
+  <button data-v="hoy" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Hoy</button>
+  <button data-v="temas"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Temas</button>
+  <button data-v="problemas"><svg viewBox="0 0 24 24"><path d="M4 18l6-12 4 8 2-4 4 8z"/></svg>Problemas</button>
+  <button data-v="biblio"><svg viewBox="0 0 24 24"><path d="M5 4v16M9 4v16M13 5l4 15M19 4v16"/></svg>Libros</button>
+</div></nav>
+
+<div class="hoja" id="hoja"><div class="panel" id="panel"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== DATOS FIJOS ===================== */
+const TEMARIO = {
+1:"Números naturales. Sistemas de numeración.",
+2:"Fundamentos y aplicaciones de la teoría de grafos. Diagramas de árbol.",
+3:"Técnicas de recuento. Combinatoria.",
+4:"Números enteros. Divisibilidad. Números primos. Congruencia.",
+5:"Números racionales.",
+6:"Números reales. Topología de la recta real.",
+7:"Aproximación de números. Errores. Notación científica.",
+8:"Sucesiones. Término general y forma recurrente. Progresiones aritméticas y geométricas. Aplicaciones.",
+9:"Números complejos. Aplicaciones geométricas.",
+10:"Sucesivas ampliaciones del concepto de número. Evolución histórica y problemas que resuelve cada una.",
+11:"Conceptos básicos de la teoría de conjuntos. Estructuras algebraicas.",
+12:"Espacios vectoriales. Variedades lineales. Aplicaciones entre espacios vectoriales. Teorema de isomorfía.",
+13:"Polinomios. Operaciones. Fórmula de Newton. Divisibilidad de polinomios. Fracciones algebraicas.",
+14:"Ecuaciones. Resolución de ecuaciones. Aproximación numérica de raíces.",
+15:"Ecuaciones diofánticas.",
+16:"Discusión y resolución de sistemas de ecuaciones lineales. Teorema de Rouché. Regla de Cramer. Método de Gauss-Jordan.",
+17:"Programación lineal. Aplicaciones.",
+18:"Matrices. Álgebra de matrices. Aplicaciones al campo de las Ciencias Sociales y de la Naturaleza.",
+19:"Determinantes. Propiedades. Aplicación al cálculo del rango de una matriz.",
+20:"El lenguaje algebraico. Símbolos y números. Importancia de su desarrollo y problemas que resuelve. Evolución histórica del álgebra.",
+21:"Funciones reales de variable real. Funciones elementales; situaciones reales en las que aparecen. Composición de funciones.",
+22:"Funciones exponenciales y logarítmicas. Situaciones reales en las que aparecen.",
+23:"Funciones circulares e hiperbólicas y sus recíprocas. Situaciones reales en las que aparecen.",
+24:"Funciones dadas en forma de tabla. Interpolación polinómica. Interpolación y extrapolación de datos.",
+25:"Límites de funciones. Continuidad y discontinuidades. Teorema de Bolzano. Ramas infinitas.",
+26:"Derivada de una función en un punto. Función derivada. Derivadas sucesivas. Aplicaciones.",
+27:"Desarrollo de una función en serie de potencias. Teorema de Taylor. Aplicaciones al estudio local de funciones.",
+28:"Estudio global de funciones. Aplicaciones a la representación gráfica de funciones.",
+29:"El problema del cálculo del área. Integral definida.",
+30:"Primitiva de una función. Cálculo de algunas primitivas. Aplicaciones de la integral al cálculo de magnitudes geométricas.",
+31:"Integración numérica. Métodos y aplicaciones.",
+32:"Aplicación del estudio de funciones a la interpretación y resolución de problemas de la Economía, las Ciencias Sociales y la Naturaleza.",
+33:"Evolución histórica del cálculo diferencial.",
+34:"Análisis y formalización de los conceptos geométricos intuitivos: incidencia, paralelismo, perpendicularidad, etc.",
+35:"Las magnitudes y su medida. Fundamentación de los conceptos relacionados con ellas.",
+36:"Proporciones notables. La razón áurea. Aplicaciones.",
+37:"La relación de semejanza en el plano. Consecuencias. Teorema de Thales. Razones trigonométricas.",
+38:"Trigonometría plana. Resolución de triángulos. Aplicaciones.",
+39:"Geometría del triángulo.",
+40:"Geometría de la circunferencia. Ángulos en la circunferencia. Potencia de un punto a una circunferencia.",
+41:"Movimientos en el plano. Composición de movimientos. Aplicaciones al estudio de las teselaciones del plano. Frisos y mosaicos.",
+42:"Homotecia y semejanza en el plano.",
+43:"Proyecciones en el plano. Mapas. Planisferios terrestres: principales sistemas de representación.",
+44:"Semejanza y movimientos en el espacio.",
+45:"Poliedros. Teorema de Euler. Sólidos platónicos y arquimedianos.",
+46:"Distintas coordenadas para describir el plano o el espacio. Ecuaciones de curvas y superficies.",
+47:"Generación de curvas como envolventes.",
+48:"Espirales y hélices. Presencia en la Naturaleza, en el Arte y en la Técnica.",
+49:"Superficies de revolución. Cuádricas. Superficies regladas. Presencia en la Naturaleza, en el Arte y la Técnica.",
+50:"Introducción a las geometrías no euclídeas. Geometría esférica.",
+51:"Sistemas de referencia en el plano y en el espacio. Ecuaciones de la recta y del plano. Relaciones afines.",
+52:"Producto escalar de vectores. Producto vectorial y producto mixto. Aplicaciones a la resolución de problemas físicos y geométricos.",
+53:"Relaciones métricas: perpendicularidad, distancias, ángulos, áreas, volúmenes, etc.",
+54:"Las cónicas como secciones planas de una superficie cónica. Estudio analítico. Presencia en la Naturaleza, Arte y Técnica.",
+55:"La geometría fractal. Nociones básicas.",
+56:"Evolución histórica de la geometría.",
+57:"Usos de la estadística: estadística descriptiva y estadística inferencial. Métodos básicos y aplicaciones de cada una de ellas.",
+58:"Población y muestra. Condiciones de representatividad de una muestra. Tipos de muestreo. Tamaño de una muestra.",
+59:"Técnicas de obtención y representación de datos. Tablas y gráficas estadísticas. Tendenciosidad y errores más comunes.",
+60:"Parámetros estadísticos. Cálculo, significado y propiedades.",
+61:"Desigualdad de Tchebyschev. Coeficiente de variación. Variable normalizada. Aplicación al análisis, interpretación y comparación de datos estadísticos.",
+62:"Series estadísticas bidimensionales. Regresión y correlación. Significado y aplicaciones.",
+63:"Frecuencia y probabilidad. Leyes del azar. Espacios probabilísticos.",
+64:"Probabilidad compuesta. Probabilidad condicionada. Probabilidad total. Teorema de Bayes.",
+65:"Distribuciones de probabilidad de variable discreta. Características y tratamiento. Las distribuciones binomial y de Poisson. Aplicaciones.",
+66:"Distribución de probabilidad de variable continua. Características y tratamiento. La distribución normal. Aplicaciones.",
+67:"Inferencia estadística. Test de hipótesis.",
+68:"Aplicaciones de la estadística y el cálculo de probabilidades al estudio y toma de decisiones en problemas de Ciencias Sociales y Naturaleza. Evolución histórica.",
+69:"La resolución de problemas en matemáticas. Estrategias. Importancia histórica.",
+70:"Lógica proposicional. Ejemplos y aplicaciones al razonamiento matemático.",
+71:"La controversia sobre los fundamentos de la matemática. Las limitaciones internas de los sistemas formales."
+};
+const TOTAL=71, BOLAS=4;
+function bloqueDe(n){ if(n<=10)return"Números"; if(n<=20)return"Álgebra"; if(n<=33)return"Análisis"; if(n<=56)return"Geometría"; if(n<=68)return"Prob. y estadística"; return"Lógica y problemas"; }
+const BLOQUES=["Números","Álgebra","Análisis","Geometría","Prob. y estadística","Lógica y problemas"];
+
+/* Selección inicial: 23 seguros + 7 para lucir (se decide tras la prueba de noviembre) */
+const SEL_INICIAL={3:"s",4:"s",9:"s",11:"s",12:"s",13:"s",14:"l",15:"s",19:"s",6:"s",23:"s",25:"s",26:"s",27:"s",29:"s",39:"s",40:"s",41:"s",45:"l",47:"l",49:"l",50:"l",52:"s",54:"s",63:"s",64:"s",65:"s",66:"s",70:"l",71:"l"};
+
+/* Libros por tema: [base, apoyo (solo para…), problemas] */
+const LIBROS={
+3:["Merris","Khoury, Tale of Discrete Mathematics (exposición)","112 Combinatorial Problems"],
+4:["Freud–Gyarmati","Campbell (Wilson generalizado)","De Koninck–Mercier"],
+6:["Ghorpade–Limaye, cap. 1","Erdman (topología fina de ℝ)","de Diego, Ejercicios de análisis"],
+9:["Hahn","Yaglom, Números complejos; Andreescu–Mushkarov 2.3","Ejercicios de Hahn"],
+11:["Anzola 1","Navarro, Un curso de álgebra (hilo del tema)","Anzola 1"],
+12:["Greenleaf–Marques I","Weintraub (notación)","Anzola 3 o Aroca"],
+13:["Anzola 2","Kurosh (funciones simétricas, Newton)","117 Polynomial Problems"],
+14:["Kurosh (separación de raíces, Sturm)","Cox, Galois Theory (por qué no hay fórmula para la quíntica)","Chirskii–Kozko; Herman–Kučera–Šimša"],
+15:["Freud–Gyarmati","Andreescu–Andrica (Pell); Herman–Kučera–Šimša (módulo p)","De Koninck–Mercier"],
+16:["Anzola 3","Kirkwood (Gauss–Jordan)","Aroca, álgebra lineal"],
+17:["Tu dossier de MACS II (no hay libro)","—","Deimos"],
+18:["Saff–Snider (Leslie, Markov, Leontief)","Greenleaf–Marques I","Aroca, álgebra lineal"],
+19:["Weintraub (determinante como volumen)","Greenleaf–Marques I (permutaciones)","Anzola 3"],
+23:["Ghorpade–Limaye (construcción analítica)","Smirnov (hiperbólicas, catenaria); Panchishkin–Shavgulidze","115 Trigonometry Problems"],
+25:["Ghorpade–Limaye","Krantz, Real Variables (esqueleto)","de Diego; Putnam and Beyond"],
+26:["Ghorpade–Limaye","Smirnov (aplicaciones)","de Diego; Andreescu–Ventullo"],
+27:["Ghorpade–Limaye","Smirnov (Taylor); Bonar–Khoury (series)","de Diego"],
+29:["Ghorpade–Limaye","Wu (cómo se enseña)","Putnam and Beyond"],
+30:["Smirnov (integración metódica, curvas clásicas)","Ghorpade–Limaye (rigor)","Butuzov, Questions and Problems"],
+39:["Pamfilos 1","Mihalescu, Remarkable Elements; Altshiller-Court","106 Geometry Problems"],
+40:["Pamfilos 1","Hadamard I","106 Geometry Problems"],
+41:["Pamfilos 2 (isometrías y teselaciones)","Hausner","Gelca–Onişor–Shine"],
+42:["Pamfilos 1–2","Gelca–Onişor–Shine","Gelca–Onişor–Shine"],
+45:["Hartshorne, Euclid and Beyond (sólidos platónicos)","Fuchs–Tabachnikov (Euler y Cauchy)","Deimos"],
+47:["Smirnov; Fuchs–Tabachnikov (cáusticas, evolutas)","Coşkun §1.3, 2.2, 3.1–3.4 (dualidad); Kock–Vainsencher 3.6.2 (Chasles)","Deimos"],
+49:["Martínez Verduch–López Machí","Montiel–Ros (regladas)","Aroca, geometría afín y métrica"],
+50:["Hartshorne, Euclid and Beyond","Pamfilos 2 (disco de Poincaré)","Deimos"],
+52:["Postnikov I (bivectores y trivectores)","Andreescu–Mushkarov 2.2","Aroca, geometría afín y métrica"],
+54:["Akopyan–Zaslavsky","Postnikov I; Coşkun §3.2 y 3.5","Aroca, geometría afín y métrica"],
+62:["Wasserman (regresión lineal)","Pruim (modelos lineales)","Deimos"],
+63:["Linde","Karr (axiomática); Taylor, Games, Gambling","Cacoullos"],
+64:["Linde","Kinney (ejemplos)","Cacoullos"],
+65:["Linde","Feller","Cacoullos"],
+66:["Linde","Karr (teorema central del límite)","Cacoullos"],
+67:["Wasserman","Linde (estadística)","Deimos"],
+69:["Mason–Burton–Stacey, Pensar matemáticamente","Engel; Rey Pastor–Babini","Tu estantería entera"],
+70:["Boolos–Burgess–Jeffrey","Davis–Hersh","Deimos"],
+71:["Boolos–Burgess–Jeffrey (Gödel)","Davis–Hersh (la controversia)","—"]
+};
+
+const ESTADOS=["Sin empezar","Esquema","Redactado","De memoria","Pulido"];
+const ESTADOS_AYUDA=["Aún no lo has tocado.","Tienes el índice y la idea que lo vertebra.","Lo has escrito entero con libros delante.","Lo escribes sin libros en el tiempo del examen. Cuenta para el sorteo.","Has hecho un simulacro y ha salido bien."];
+
+/* Biblioteca podada (tabla «Poda para oposiciones») */
+const BIBLIO=[
+["Teoría de números","196 Freud–Gyarmati (solo al redactar)","Deimos; 251 De Koninck–Mercier","198 Andreescu–Andrica; 206 Herman–Kučera–Šimša; 195 Campbell","197 Mollin; 199 Andreescu–Dospinescu–Mushkarov"],
+["Geometría","162–163 Postnikov I–II; 172 Pamfilos 1","Deimos; 169 Aroca–Fernández–Pérez; 232 Geometric Inequalities (1.2, 2.1–2.3, 2.5, 3, 6.1, 7.1–7.2); 227 106 Geometry Problems","182 cónicas; 183 transformaciones; 185 complejos; Coşkun (proyectiva); 171 Hadamard; 181 Byer–Lazebnik–Smeltzer; 188 cuadriláteros","173 Pamfilos 2; 228 107 Geometry Problems; 231 Lemmas; Coxeter; Wylie"],
+["Álgebra lineal","112 Greenleaf–Marques I","Deimos; 192 Anzola 3; 119 Aroca–Fernández–Pérez","113 Greenleaf–Marques II (Jordan); 114 Weintraub; 116 Kirkwood; 115 Loehr","117 Roberts; 118 Saff–Snider"],
+["Álgebra","190–192 Anzola–Caruncho 1–3","Deimos; Anzola 1–3","193 Kurosh; 205 Chirskii–Kozko; 200 Litvinenko–Mordkovich; Andreescu 220–226, 233–235, 241","194 Navarro; 98 Isaacs"],
+["Trigonometría","Línea analítica de Ghorpade–Limaye","201 Panchishkin–Shavgulidze; 223 115 Trigonometry Problems","207 Wu","202 Rozenblyum"],
+["Análisis (una variable)","Ghorpade–Limaye, única base","Deimos; 212 de Diego; 215 Putnam and Beyond","Smirnov 1–3; 131 Krantz; 143 Bonar–Khoury; 240 Andreescu–Ventullo","128 Sohrab; 130 Fischer; 132 Taylor; 129 Silva; 120–122 Ilyin–Poznyak"],
+["Análisis (varias variables)","Smirnov","Deimos","133 Erdman; 135 Nitecki","134 Shurman"],
+["Variable compleja","185 Hahn","—","140 J. L. Taylor; 142 Gordon; 146 Boyadzhiev","138, 139, 141"],
+["Ecuaciones diferenciales","148 Cordero–Gómez–Vázquez; Smirnov 3","—","—","147 Amann; 149 Evans"],
+["Probabilidad","156 Linde","Deimos; 158 Cacoullos","157 Karr","155 Kinney; 154 Feller; 161 Taylor; 153 Adams–Guillemin"],
+["Estadística","156 Linde","Deimos","159 Wasserman (inferencia)","160 Pruim"],
+["Combinatoria","252 Merris","Deimos; 230 112 Combinatorial Problems","—","253 Khoury; 254 Bumbăcea"],
+["Lógica y fundamentos","Boolos–Burgess–Jeffrey","—","Davis–Hersh","—"]
+];
+const FUENTES=["Deimos 3","Deimos 4","Deimos 9","Sánchez Torres","de Diego, Ejercicios de análisis","Putnam and Beyond","De Koninck–Mercier","Anzola 1","Anzola 2","Anzola 3","Aroca, álgebra lineal","Aroca, geometría afín y métrica","Cacoullos","112 Combinatorial Problems","106 Geometry Problems","Geometric Inequalities","115 Trigonometry Problems","117 Polynomial Problems","Panchishkin–Shavgulidze","Andreescu–Ventullo","Gelca–Onişor–Shine","Butuzov, Questions and Problems","Hahn","Otro"];
+
+/* ===================== ESTADO ===================== */
+const CLAVE="el-sorteo-v1";
+const hoyISO=()=>fechaISO(new Date());
+function fechaISO(d){const z=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate());}
+function sumaDias(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return fechaISO(d);}
+function difDias(a,b){return Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);}
+
+function estadoInicial(){
+  const temas={};
+  for(let n=1;n<=TOTAL;n++){temas[n]={sel:!!SEL_INICIAL[n],tipo:SEL_INICIAL[n]==="l"?"l":"s",est:0,rep:null,nota:""};}
+  return {v:1,temas,problemas:[],sesiones:[],simulacros:[],examen:"2027-09-01",meta:14,minSim:120,sellos:{},creado:hoyISO()};
+}
+let S;
+function cargar(){
+  try{const t=localStorage.getItem(CLAVE); if(t){S=JSON.parse(t);} }catch(e){}
+  if(!S||!S.temas){S=estadoInicial();}
+  for(let n=1;n<=TOTAL;n++) if(!S.temas[n]) S.temas[n]={sel:false,tipo:"s",est:0,rep:null,nota:""};
+  S.sellos=S.sellos||{}; S.problemas=S.problemas||[]; S.sesiones=S.sesiones||[]; S.simulacros=S.simulacros||[];
+}
+function guardar(){ try{localStorage.setItem(CLAVE,JSON.stringify(S));}catch(e){} revisarSellos(); }
+
+/* ===================== CÁLCULOS ===================== */
+function comb(n,k){if(k<0||k>n)return 0;let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return r;}
+function cobertura(k){return 1-comb(TOTAL-k,BOLAS)/comb(TOTAL,BOLAS);}
+function dosOMas(k){return 1-comb(TOTAL-k,BOLAS)/comb(TOTAL,BOLAS)-k*comb(TOTAL-k,BOLAS-1)/comb(TOTAL,BOLAS);}
+const listos=()=>Object.keys(S.temas).filter(n=>S.temas[n].est>=3).map(Number);
+const elegidos=()=>Object.keys(S.temas).filter(n=>S.temas[n].sel).map(Number).sort((a,b)=>a-b);
+const pct=x=>Math.round(x*100)+" %";
+function inicioSemana(){const d=new Date();const w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return fechaISO(d);}
+function minutosSemana(){const i=inicioSemana();return S.sesiones.filter(s=>s.d>=i).reduce((a,s)=>a+(+s.min||0),0);}
+function problemasPendientes(){const h=hoyISO();return S.problemas.filter(p=>p.prox&&p.prox<=h).sort((a,b)=>a.prox<b.prox?-1:1);}
+function paraRefrescar(){
+  return listos().map(n=>({n,ult:S.temas[n].rep||"0000"})).sort((a,b)=>a.ult<b.ult?-1:1)
+    .filter(x=>x.ult==="0000"||difDias(x.ult,hoyISO())>=21).slice(0,2);
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+/* ===================== SELLOS ===================== */
+const SELLOS=[
+["esq1","Primer esquema",()=>Object.values(S.temas).some(t=>t.est>=1),"E"],
+["red1","Primer tema redactado",()=>Object.values(S.temas).some(t=>t.est>=2),"R"],
+["mem1","Primer tema de memoria",()=>listos().length>=1,"M"],
+["sim1","Primer simulacro",()=>S.simulacros.length>=1,"S"],
+["c50","Cobertura 50 %",()=>cobertura(listos().length)>=.5,"½"],
+["c75","Cobertura 75 %",()=>cobertura(listos().length)>=.75,"¾"],
+["c90","Cobertura 90 %",()=>cobertura(listos().length)>=.9,"9"],
+["p10","10 problemas",()=>S.problemas.length>=10,"10"],
+["p50","50 problemas",()=>S.problemas.length>=50,"50"],
+["p100","100 problemas",()=>S.problemas.length>=100,"C"],
+["sem","Semana cumplida",()=>minutosSemana()>=S.meta*60,"✓"],
+["rep","Primer problema rehecho",()=>S.problemas.some(p=>(p.hist||[]).length>=2),"↻"]
+];
+function revisarSellos(){
+  let nuevo=null;
+  for(const [id,nom,f] of SELLOS){ if(!S.sellos[id]&&f()){S.sellos[id]=hoyISO();nuevo=nom;} }
+  if(nuevo){ try{localStorage.setItem(CLAVE,JSON.stringify(S));}catch(e){} setTimeout(()=>toast("Sello nuevo: "+nuevo),300); }
+}
+
+/* ===================== UI BASE ===================== */
+const $=s=>document.querySelector(s);
+let vistaActual="hoy", filtroTemas="mios", filtroProb="todos", busqProb="";
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("ver");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("ver"),2200);}
+function abrir(html){$("#panel").innerHTML=html;$("#hoja").classList.add("ver");}
+function cerrar(){ $("#hoja").classList.remove("ver"); }
+$("#hoja").addEventListener("click",e=>{if(e.target.id==="hoja"&&!reloj.id)cerrar();});
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{vistaActual=b.dataset.v;pintar();window.scrollTo(0,0);});
+$("#bSorteo").onclick=()=>sorteo();
+$("#bAjustes").onclick=()=>ajustes();
+
+function pintar(){
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===vistaActual));
+  ({hoy:vHoy,temas:vTemas,problemas:vProblemas,biblio:vBiblio})[vistaActual]();
+}
+
+/* ===================== HOY ===================== */
+function vHoy(){
+  const k=listos().length, el=elegidos().length;
+  const dias=difDias(hoyISO(),S.examen);
+  const minS=minutosSemana(), meta=S.meta*60;
+  const sig=Math.min(TOTAL,k+5);
+  const pend=problemasPendientes().slice(0,3);
+  const refr=paraRefrescar();
+  const h=new Date().getHours();
+  const saludo=h<14?"Buenos días, Andrés":h<21?"Buenas tardes, Andrés":"Buenas noches, Andrés";
+  $("#vista").innerHTML=`
+  <section class="saludo"><h1>${saludo}</h1><p>${dias>0?`Quedan <span class="num">${dias}</span> días para el examen.`:"Ya es el examen. Mucha suerte."} ${frase()}</p></section>
+
+  <h2 class="sec">Si el sorteo fuera hoy<span>${k} de ${el} temas listos</span></h2>
+  <div class="card pad">
+    <div class="cifras"><div><div class="grande num">${pct(cobertura(k))}</div><div class="pista" style="margin-top:6px">de que salga al menos un tema tuyo</div></div>
+    <div style="text-align:right"><div class="num" style="font-size:1.1rem">${pct(dosOMas(k))}</div><div class="pista">de poder elegir</div></div></div>
+    <div class="barra"><i style="width:${cobertura(el)*100}%"></i><b style="width:${cobertura(k)*100}%"></b></div>
+    <div class="pista">${k<TOTAL?`Con ${sig-k} temas más de memoria: <span class="num">${pct(cobertura(sig))}</span>.`:""} La franja clara es tu techo con los ${el} elegidos: <span class="num">${pct(cobertura(el))}</span>.</div>
+  </div>
+
+  <h2 class="sec">Esta semana<span>meta ${S.meta} h</span></h2>
+  <div class="card pad">
+    <div class="cifras"><div class="grande num">${(minS/60).toFixed(1).replace(".",",")} h</div><button class="btn peq" id="bRato">Registrar un rato</button></div>
+    <div class="barra"><b style="width:${Math.min(100,minS/meta*100)}%"></b></div>
+    <div class="pista">${minS>=meta?"Semana cumplida. Lo demás es propina.":"Sin prisa: cuenta lo que hagas, no lo que falte."}</div>
+  </div>
+
+  ${refr.length?`<h2 class="sec">Para refrescar<span>temas que llevas tiempo sin escribir</span></h2>
+  <div class="lista">${refr.map(x=>itemTema(x.n)).join("")}</div>`:""}
+
+  <h2 class="sec">Para rehacer<span>${pend.length?"si te apetece":"nada pendiente"}</span></h2>
+  ${pend.length?`<div class="lista">${pend.map(itemProblema).join("")}</div>`:`<div class="card vacio">Cuando registres problemas, aquí aparecerán unos pocos para rehacer en el momento justo. Nunca más de tres.</div>`}
+
+  <h2 class="sec">Sellos<span>${Object.keys(S.sellos).length} de ${SELLOS.length}</span></h2>
+  <div class="sellos">${SELLOS.map(([id,nom,,m])=>`<div class="sello ${S.sellos[id]?"si":""}"><div class="m">${m}</div>${nom}</div>`).join("")}</div>
+  <div style="height:20px"></div>`;
+  $("#bRato").onclick=()=>registrarRato();
+  enlazarItems();
+}
+function frase(){
+  const F=["Un tema bien escrito vale más que tres a medias.","Hoy basta con un rato.","La constancia gana a la intensidad.","Escribe como si el tribunal fuera curioso.","Cada tema de memoria mueve la aguja del sorteo.","Un problema rehecho es un problema que ya es tuyo."];
+  return F[(new Date().getDate())%F.length];
+}
+
+/* ===================== TEMAS ===================== */
+function puntos(est){return `<span class="puntos">${[1,2,3,4].map(i=>`<i class="${est>=i?"s":""}"></i>`).join("")}</span>`;}
+function itemTema(n){
+  const t=S.temas[n];
+  const corto=TEMARIO[n].split(". ")[0].replace(/\.$/,"");
+  return `<button class="item ${t.sel?"":"fuera"}" data-tema="${n}"><span class="n">${n}</span><span class="t"><b>${esc(corto)}</b><small>${ESTADOS[t.est]}${t.sel&&t.tipo==="l"?" · para lucir":""}</small></span>${puntos(t.est)}</button>`;
+}
+function vTemas(){
+  let ns=[];
+  for(let n=1;n<=TOTAL;n++){const t=S.temas[n]; if(filtroTemas==="mios"&&!t.sel)continue; if(filtroTemas==="lucir"&&!(t.sel&&t.tipo==="l"))continue; ns.push(n);}
+  const porBloque={}; ns.forEach(n=>{(porBloque[bloqueDe(n)]=porBloque[bloqueDe(n)]||[]).push(n);});
+  const cuenta=[0,0,0,0,0]; elegidos().forEach(n=>cuenta[S.temas[n].est]++);
+  $("#vista").innerHTML=`
+  <section class="saludo"><h1>Temas</h1><p>${elegidos().length} elegidos · ${cuenta[3]+cuenta[4]} de memoria · ${cuenta[2]} redactados · ${cuenta[1]} en esquema</p></section>
+  <div class="fila" style="margin:12px 0 4px">
+    ${[["mios","Mis temas"],["lucir","Para lucir"],["todos","Los 71"]].map(([k,l])=>`<button class="chip ${filtroTemas===k?"on":""}" data-f="${k}">${l}</button>`).join("")}
+  </div>
+  ${BLOQUES.filter(b=>porBloque[b]).map(b=>`<h2 class="sec">${b}<span>${porBloque[b].length}</span></h2><div class="lista">${porBloque[b].map(itemTema).join("")}</div>`).join("")}
+  <p class="pista" style="margin:22px 0">Un tema cuenta para el sorteo cuando llega a «De memoria»: lo escribes sin libros en el tiempo del examen.</p>`;
+  document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{filtroTemas=b.dataset.f;vTemas();});
+  enlazarItems();
+}
+function enlazarItems(){
+  document.querySelectorAll("[data-tema]").forEach(b=>b.onclick=()=>fichaTema(+b.dataset.tema));
+  document.querySelectorAll("[data-prob]").forEach(b=>b.onclick=()=>fichaProblema(b.dataset.prob));
+}
+function fichaTema(n){
+  const t=S.temas[n], L=LIBROS[n];
+  const ses=S.sesiones.filter(s=>s.tema==n).reduce((a,s)=>a+(+s.min||0),0);
+  abrir(`<div class="cab"><div><div class="eyebrow">Tema ${n} · ${bloqueDe(n)}</div><h3>${esc(TEMARIO[n])}</h3></div><button class="cerrar" data-cerrar>×</button></div>
+  <div class="fila" style="margin:10px 0 2px">
+    <button class="chip ${t.sel?"on":""}" id="tSel">${t.sel?"En mis temas":"Añadir a mis temas"}</button>
+    ${t.sel?`<button class="chip ${t.tipo==="s"?"on":""}" data-tipo="s">Seguro</button><button class="chip lucir ${t.tipo==="l"?"on":""}" data-tipo="l">Para lucir</button>`:""}
+  </div>
+  <div class="seg">${ESTADOS.map((e,i)=>`<button data-est="${i}" class="${t.est===i?"on":""}">${e}</button>`).join("")}</div>
+  <p class="pista" id="ayudaEst" style="margin:6px 2px 0">${ESTADOS_AYUDA[t.est]}</p>
+  ${L?`<h2 class="sec" style="margin-top:20px">Libros</h2><dl class="libros"><dt>Base</dt><dd>${esc(L[0])}</dd><dt>Apoyo, solo para</dt><dd>${esc(L[1])}</dd><dt>Problemas</dt><dd>${esc(L[2])}</dd></dl>`:`<p class="pista" style="margin-top:16px">Sin libros asignados todavía.</p>`}
+  <label class="campo">La idea que lo vertebra, el índice, lo que no puede faltar<textarea id="tNota" placeholder="p. ej. Hilo: de Bolzano a la compacidad. Cierre didáctico: …">${esc(t.nota)}</textarea></label>
+  <div class="pista" style="margin-top:10px">${ses?`Llevas <span class="num">${(ses/60).toFixed(1).replace(".",",")}</span> h en este tema.`:""} ${t.rep?`Última vez escrito: ${fmtFecha(t.rep)}.`:""}</div>
+  <div class="fila" style="margin-top:16px">
+    <button class="btn peq" id="tRato">Registrar un rato</button>
+    ${t.est>=2?`<button class="btn sec peq" id="tRep">Lo he reescrito hoy</button>`:""}
+    <button class="btn sec peq" id="tSim">Simulacro</button>
+  </div>`);
+  bindCerrar();
+  $("#tSel").onclick=()=>{t.sel=!t.sel;guardar();fichaTema(n);pintar();};
+  document.querySelectorAll("[data-tipo]").forEach(b=>b.onclick=()=>{t.tipo=b.dataset.tipo;guardar();fichaTema(n);pintar();});
+  document.querySelectorAll("[data-est]").forEach(b=>b.onclick=()=>{const prev=t.est;t.est=+b.dataset.est;if(t.est>=3&&prev<3)t.rep=hoyISO();guardar();fichaTema(n);pintar();if(t.est>=3&&prev<3)toast(`Ahora: ${pct(cobertura(listos().length))} en el sorteo`);});
+  $("#tNota").onchange=e=>{t.nota=e.target.value;guardar();};
+  $("#tRato").onclick=()=>registrarRato({tipo:"tema",tema:n});
+  if($("#tRep"))$("#tRep").onclick=()=>{t.rep=hoyISO();guardar();toast("Anotado");fichaTema(n);pintar();};
+  $("#tSim").onclick=()=>simulacro([n],n);
+}
+function fmtFecha(iso){const d=new Date(iso+"T12:00:00");return d.toLocaleDateString("es-ES",{day:"numeric",month:"short"});}
+function bindCerrar(){document.querySelectorAll("[data-cerrar]").forEach(b=>b.onclick=cerrar);}
+
+/* ===================== REGISTRO DE RATOS ===================== */
+function registrarRato(pre={}){
+  const tipo=pre.tipo||"tema";
+  const opcT=elegidos().map(n=>`<option value="${n}" ${pre.tema==n?"selected":""}>${n}. ${esc(TEMARIO[n].split(". ")[0])}</option>`).join("");
+  abrir(`<div class="cab"><h3>Registrar un rato</h3><button class="cerrar" data-cerrar>×</button></div>
+  <div class="fila" style="margin-top:6px">${[["tema","Tema"],["problemas","Problemas"],["lectura","Lectura"]].map(([k,l])=>`<button class="chip ${tipo===k?"on":""}" data-tr="${k}">${l}</button>`).join("")}</div>
+  <div id="rTema" style="${tipo==="tema"?"":"display:none"}"><label class="campo">¿Qué tema?<select id="rT">${opcT}</select></label></div>
+  <label class="campo">Minutos<div class="fila" id="rMins">${[20,30,45,60,90,120].map(m=>`<button class="chip" data-m="${m}">${m}</button>`).join("")}</div><input type="number" id="rMin" min="5" step="5" value="45" inputmode="numeric"></label>
+  <label class="campo">Nota (opcional)<input type="text" id="rNota" placeholder="Una línea basta"></label>
+  <div class="fila" style="margin-top:16px"><button class="btn" id="rOk">Guardar</button></div>`);
+  bindCerrar();
+  let t=tipo;
+  document.querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{t=b.dataset.tr;document.querySelectorAll("[data-tr]").forEach(x=>x.classList.toggle("on",x===b));$("#rTema").style.display=t==="tema"?"":"none";});
+  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{$("#rMin").value=b.dataset.m;});
+  $("#rOk").onclick=()=>{
+    const min=Math.max(1,+$("#rMin").value||0);
+    S.sesiones.push({d:hoyISO(),min,tipo:t,tema:t==="tema"?+$("#rT").value:null,nota:$("#rNota").value.trim()});
+    guardar();cerrar();pintar();toast(`+${min} min`);
+  };
+}
+
+/* ===================== SORTEO Y SIMULACRO ===================== */
+function sacarBolas(){const a=[];while(a.length<BOLAS){const n=1+Math.floor(Math.random()*TOTAL);if(!a.includes(n))a.push(n);}return a.sort((x,y)=>x-y);}
+function sorteo(){
+  const b=sacarBolas();
+  abrir(`<div class="cab"><div><div class="eyebrow">Ensayo del sorteo</div><h3>Cuatro bolas de 71</h3></div><button class="cerrar" data-cerrar>×</button></div>
+  <div class="bolas">${b.map((n,i)=>{const t=S.temas[n];const mia=t.est>=3;return `<div class="bolaw"><div class="bola ${mia?"mia":""}" style="animation-delay:${i*.35}s">${n}</div><small>${esc(TEMARIO[n].split(". ")[0])}<br><span class="dim">${t.sel?ESTADOS[t.est]:"No elegido"}</span></small>${t.est>=2?`<button data-simt="${n}">Escribirlo</button>`:""}</div>`;}).join("")}</div>
+  <div class="aviso-suave" id="sRes" style="opacity:0;transition:opacity .4s"></div>
+  <div class="fila" style="margin-top:14px"><button class="btn sec peq" id="sOtra">Otra vez</button></div>`);
+  bindCerrar();
+  document.querySelectorAll(".bola").forEach(e=>e.classList.add("cae"));
+  const mias=b.filter(n=>S.temas[n].est>=3).length, elig=b.filter(n=>S.temas[n].sel).length;
+  setTimeout(()=>{const r=$("#sRes");if(!r)return;r.style.opacity=1;r.textContent=mias>=2?`Te salen ${mias} temas preparados: puedes elegir.`:mias===1?"Te sale uno preparado. Con eso basta para escribir con calma.":elig?`Ninguno está aún de memoria, pero ${elig} ${elig>1?"son":"es"} de tus elegidos. Ese es el camino.`:"Ninguno tuyo esta vez. Por eso preparas 30.";},BOLAS*350+400);
+  $("#sOtra").onclick=sorteo;
+  document.querySelectorAll("[data-simt]").forEach(x=>x.onclick=()=>simulacro(b,+x.dataset.simt));
+}
+const reloj={id:null,fin:0,tema:null,bolas:null,inicio:0};
+function simulacro(bolas,tema){
+  abrir(`<div class="cab"><div><div class="eyebrow">Simulacro · sin libros</div><h3>Tema ${tema}. ${esc(TEMARIO[tema])}</h3></div><button class="cerrar" id="simX">×</button></div>
+  <div class="reloj" id="relojTxt">${fmtReloj(S.minSim*60)}</div>
+  <p class="pista" style="text-align:center">${S.minSim} minutos, como en el examen. Puedes cambiarlo en ajustes.</p>
+  <div class="fila" style="justify-content:center;margin-top:12px"><button class="btn" id="simGo">Empezar</button><button class="btn sec" id="simFin" style="display:none">He terminado</button></div>`);
+  $("#simX").onclick=()=>{ if(reloj.id&&!confirm("¿Dejar el simulacro? No se guardará."))return; pararReloj(); cerrar(); };
+  $("#simGo").onclick=()=>{
+    reloj.tema=tema;reloj.bolas=bolas;reloj.inicio=Date.now();reloj.fin=Date.now()+S.minSim*60000;
+    $("#simGo").style.display="none";$("#simFin").style.display="";
+    reloj.id=setInterval(tic,500);tic();
+    try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(l=>reloj.lock=l).catch(()=>{});}catch(e){}
+  };
+  $("#simFin").onclick=()=>terminarSim();
+}
+function fmtReloj(s){s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":":"")+String(m).padStart(2,"0")+":"+String(x).padStart(2,"0");}
+function tic(){const q=(reloj.fin-Date.now())/1000;const e=$("#relojTxt");if(e)e.textContent=fmtReloj(q);if(q<=0){terminarSim(true);}}
+function pararReloj(){clearInterval(reloj.id);reloj.id=null;try{reloj.lock&&reloj.lock.release();}catch(e){}}
+function terminarSim(agotado){
+  if(!reloj.id)return;
+  pararReloj();
+  const min=Math.max(1,Math.round((Date.now()-reloj.inicio)/60000));
+  const n=reloj.tema;
+  abrir(`<div class="cab"><h3>${agotado?"Tiempo":"Terminado"}</h3><button class="cerrar" data-cerrar>×</button></div>
+  <p class="muted">Tema ${n}, <span class="num">${min}</span> minutos. ¿Cómo ha ido?</p>
+  <div class="fila" style="margin-top:10px"><button class="btn" data-sr="bien">Bien: lo daría</button><button class="btn sec" data-sr="justo">Justo</button><button class="btn sec" data-sr="flojo">Flojo</button></div>
+  <label class="campo">Qué te ha faltado (opcional)<input type="text" id="simNota" placeholder="p. ej. la demostración de Bolzano, el cierre didáctico"></label>`);
+  bindCerrar();
+  document.querySelectorAll("[data-sr]").forEach(b=>b.onclick=()=>{
+    const r=b.dataset.sr,t=S.temas[n];
+    S.simulacros.push({d:hoyISO(),bolas:reloj.bolas,tema:n,min,res:r,nota:$("#simNota").value.trim()});
+    S.sesiones.push({d:hoyISO(),min,tipo:"simulacro",tema:n,nota:""});
+    t.rep=hoyISO();
+    if(r==="bien")t.est=Math.max(t.est,4); else if(r==="justo")t.est=Math.max(t.est,3);
+    if($("#simNota").value.trim()) t.nota=(t.nota?t.nota+"\n":"")+"Simulacro "+fmtFecha(hoyISO())+": falta "+$("#simNota").value.trim();
+    guardar();cerrar();pintar();toast(r==="bien"?"Tema pulido":"Guardado. A la próxima");
+  });
+}
+
+/* ===================== PROBLEMAS ===================== */
+const INTERVALO={bien:21,justo:7,mal:2};
+function programar(p,r){
+  const prev=p.int||0; let i;
+  if(r==="mal")i=2; else if(r==="justo")i=Math.max(7,Math.round(prev*1.2)); else i=prev?Math.min(120,Math.round(prev*2.5)):21;
+  p.int=i;p.prox=sumaDias(hoyISO(),i);(p.hist=p.hist||[]).push({d:hoyISO(),r});
+}
+function itemProblema(p){
+  const h=hoyISO();
+  const due=p.prox&&p.prox<=h;
+  return `<button class="item" data-prob="${p.id}"><span class="t"><b>${esc(p.ref||p.fuente)}</b><small>${esc(p.fuente)}${p.tecnica?" · "+esc(p.tecnica):""}</small></span><span class="pista" style="text-align:right;white-space:nowrap">${due?"hoy":p.prox?fmtFecha(p.prox):""}</span></button>`;
+}
+function vProblemas(){
+  const pend=problemasPendientes();
+  let L=S.problemas.slice().reverse();
+  if(filtroProb!=="todos")L=L.filter(p=>p.bloque===filtroProb);
+  if(busqProb){const q=busqProb.toLowerCase();L=L.filter(p=>(p.ref+" "+p.fuente+" "+p.tecnica+" "+p.nota).toLowerCase().includes(q));}
+  const tecnicas={};S.problemas.forEach(p=>{if(p.tecnica)tecnicas[p.tecnica]=(tecnicas[p.tecnica]||0)+1;});
+  const topT=Object.entries(tecnicas).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  $("#vista").innerHTML=`
+  <section class="saludo"><h1>Problemas</h1><p>${S.problemas.length} resueltos · ${pend.length} para rehacer hoy</p></section>
+  <div class="fila" style="margin-top:12px"><button class="btn" id="pNuevo">Anotar un problema</button></div>
+  ${topT.length?`<h2 class="sec">Tus técnicas<span>las que más usas</span></h2><div class="fila">${topT.map(([t,c])=>`<button class="chip" data-tq="${esc(t)}">${esc(t)} <span class="num">${c}</span></button>`).join("")}</div>`:""}
+  <h2 class="sec">Todos<span>${L.length}</span></h2>
+  <div class="fila">${["todos",...BLOQUES].map(b=>`<button class="chip ${filtroProb===b?"on":""}" data-pb="${b}">${b==="todos"?"Todos":b}</button>`).join("")}</div>
+  <input class="buscar" type="text" id="pBus" placeholder="Buscar por fuente, técnica o nota" value="${esc(busqProb)}">
+  ${L.length?`<div class="lista">${L.map(itemProblema).join("")}</div>`:`<div class="card vacio">Anota cada problema que resuelvas con su técnica estrella: la idea que lo desbloquea. La app te lo devolverá para rehacerlo a los pocos días, luego a las semanas.</div>`}
+  <div style="height:24px"></div>`;
+  $("#pNuevo").onclick=()=>nuevoProblema();
+  document.querySelectorAll("[data-pb]").forEach(b=>b.onclick=()=>{filtroProb=b.dataset.pb;vProblemas();});
+  document.querySelectorAll("[data-tq]").forEach(b=>b.onclick=()=>{busqProb=b.dataset.tq;vProblemas();});
+  $("#pBus").oninput=e=>{busqProb=e.target.value;clearTimeout(vProblemas._t);vProblemas._t=setTimeout(()=>{vProblemas();const i=$("#pBus");i.focus();i.setSelectionRange(i.value.length,i.value.length);},350);};
+  enlazarItems();
+}
+function nuevoProblema(){
+  const tecs=[...new Set(S.problemas.map(p=>p.tecnica).filter(Boolean))];
+  abrir(`<div class="cab"><h3>Anotar un problema</h3><button class="cerrar" data-cerrar>×</button></div>
+  <label class="campo">Fuente<select id="nF">${FUENTES.map(f=>`<option>${esc(f)}</option>`).join("")}</select></label>
+  <label class="campo">Referencia<input type="text" id="nR" placeholder="p. ej. Valencia 2018, prob. 3 · p. 112"></label>
+  <label class="campo">Bloque<select id="nB">${BLOQUES.map(b=>`<option>${b}</option>`).join("")}</select></label>
+  <label class="campo">Técnica estrella<input type="text" id="nT" list="tecs" placeholder="p. ej. reducir módulo p, simetría, telescópica"><datalist id="tecs">${tecs.map(t=>`<option value="${esc(t)}">`).join("")}</datalist></label>
+  <label class="campo">Nota (opcional)<input type="text" id="nN" placeholder="Lo que te costó ver"></label>
+  <label class="campo">¿Cómo ha ido?</label>
+  <div class="fila" style="margin-top:6px"><button class="btn" data-nr="bien">Bien</button><button class="btn sec" data-nr="justo">Con ayuda</button><button class="btn sec" data-nr="mal">No salió</button></div>`);
+  bindCerrar();
+  document.querySelectorAll("[data-nr]").forEach(b=>b.onclick=()=>{
+    const p={id:"p"+Date.now().toString(36),fuente:$("#nF").value,ref:$("#nR").value.trim(),bloque:$("#nB").value,tecnica:$("#nT").value.trim(),nota:$("#nN").value.trim(),creado:hoyISO()};
+    programar(p,b.dataset.nr);S.problemas.push(p);guardar();cerrar();pintar();toast("Vuelve el "+fmtFecha(p.prox));
+  });
+}
+function fichaProblema(id){
+  const p=S.problemas.find(x=>x.id===id); if(!p)return;
+  const R={bien:"bien",justo:"con ayuda",mal:"no salió"};
+  abrir(`<div class="cab"><div><div class="eyebrow">${esc(p.bloque)}</div><h3>${esc(p.ref||p.fuente)}</h3></div><button class="cerrar" data-cerrar>×</button></div>
+  <dl class="libros"><dt>Fuente</dt><dd>${esc(p.fuente)}</dd><dt>Técnica</dt><dd>${esc(p.tecnica||"—")}</dd>${p.nota?`<dt>Nota</dt><dd>${esc(p.nota)}</dd>`:""}<dt>Historial</dt><dd>${(p.hist||[]).map(h=>`${fmtFecha(h.d)}: ${R[h.r]}`).join(" · ")}</dd><dt>Vuelve</dt><dd>${p.prox?fmtFecha(p.prox):"—"}</dd></dl>
+  <label class="campo">Lo he rehecho hoy y ha ido…</label>
+  <div class="fila" style="margin-top:6px"><button class="btn" data-rr="bien">Bien</button><button class="btn sec" data-rr="justo">Con ayuda</button><button class="btn sec" data-rr="mal">No salió</button></div>
+  <div class="fila" style="margin-top:22px"><button class="btn peligro peq" id="pBorra">Borrar</button></div>`);
+  bindCerrar();
+  document.querySelectorAll("[data-rr]").forEach(b=>b.onclick=()=>{programar(p,b.dataset.rr);guardar();cerrar();pintar();toast("Vuelve el "+fmtFecha(p.prox));});
+  $("#pBorra").onclick=()=>{if(confirm("¿Borrar este problema?")){S.problemas=S.problemas.filter(x=>x!==p);guardar();cerrar();pintar();}};
+}
+
+/* ===================== BIBLIOTECA ===================== */
+function vBiblio(){
+  $("#vista").innerHTML=`
+  <section class="saludo"><h1>Libros</h1><p>La poda: un libro de temas y uno de problemas por bloque. El resto, solo por técnica.</p></section>
+  <div class="aviso-suave">Común a todo: Deimos 3, 4 y 9 y Sánchez Torres.</div>
+  <div style="margin-top:14px">${BIBLIO.map(([b,t,p,c,r])=>`<div class="card pad bloq"><h3>${b}</h3>
+    <div class="r"><span>Temas</span><span>${esc(t)}</span></div>
+    <div class="r"><span>Problemas</span><span>${esc(p)}</span></div>
+    <div class="r"><span>Consulta</span><span class="muted">${esc(c)}</span></div>
+    <div class="r"><span>Reserva</span><span class="dim">${esc(r)}</span></div></div>`).join("")}</div>
+  <div style="height:20px"></div>`;
+}
+
+/* ===================== AJUSTES ===================== */
+function ajustes(){
+  abrir(`<div class="cab"><h3>Ajustes</h3><button class="cerrar" data-cerrar>×</button></div>
+  <label class="campo">Fecha prevista del examen<input type="date" id="aF" value="${S.examen}"></label>
+  <label class="campo">Meta semanal (horas)<input type="number" id="aM" min="1" max="60" value="${S.meta}"></label>
+  <label class="campo">Duración del simulacro (minutos)<input type="number" id="aS" min="30" max="240" step="5" value="${S.minSim}"></label>
+  <p class="pista" style="margin-top:8px">El sorteo usa 4 bolas de 71, como en convocatoria ordinaria (RD 276/2007, art. 21.1). Compruébalo en las bases de 2027.</p>
+  <h2 class="sec">Copia de seguridad</h2>
+  <p class="pista">Tus datos viven solo en este navegador. Exporta de vez en cuando.</p>
+  <div class="fila" style="margin-top:8px"><button class="btn sec peq" id="aExp">Exportar</button><label class="btn sec peq" style="cursor:pointer">Importar<input type="file" id="aImp" accept="application/json" hidden></label></div>
+  <div class="fila" style="margin-top:22px"><button class="btn" id="aOk">Guardar</button></div>`);
+  bindCerrar();
+  $("#aOk").onclick=()=>{S.examen=$("#aF").value||S.examen;S.meta=Math.max(1,+$("#aM").value||14);S.minSim=Math.max(30,+$("#aS").value||120);guardar();cerrar();pintar();};
+  $("#aExp").onclick=()=>{const b=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="el-sorteo-"+hoyISO()+".json";a.click();};
+  $("#aImp").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o.temas)throw 0;if(confirm("¿Sustituir tus datos por los del archivo?")){S=o;guardar();cerrar();pintar();toast("Datos importados");}}catch(x){toast("Ese archivo no es una copia de El sorteo");}});};
+}
+
+/* ===================== ARRANQUE ===================== */
+cargar(); pintar();
+if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>

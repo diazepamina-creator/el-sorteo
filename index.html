@@ -56,7 +56,7 @@ h2.sec span{font-family:var(--sans);font-weight:400;font-size:.78rem;color:var(-
 .pad{padding:16px}
 .muted{color:var(--tinta2)} .dim{color:var(--tinta3)}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.btn{border:1px solid var(--tinta);background:var(--tinta);color:var(--papel);border-radius:999px;padding:10px 18px;font-weight:500;font-size:.95rem;display:inline-flex;align-items:center;gap:8px}
+.btn{text-decoration:none;border:1px solid var(--tinta);background:var(--tinta);color:var(--papel);border-radius:999px;padding:10px 18px;font-weight:500;font-size:.95rem;display:inline-flex;align-items:center;gap:8px}
 .btn.sec{background:transparent;color:var(--tinta);border-color:var(--linea)}
 .btn.peq{padding:7px 13px;font-size:.85rem}
 .btn.peligro{background:transparent;color:var(--aviso);border-color:color-mix(in srgb,var(--aviso) 45%,transparent)}
@@ -272,6 +272,9 @@ const LIBROS={
 71:["Boolos–Burgess–Jeffrey (Gödel)","Davis–Hersh (la controversia)","—"]
 };
 
+/* Esqueletos: documento privado de Claude (solo lo abre Andrés con su cuenta) */
+const DOC_ESQ="https://claude.ai/code/artifact/667b25ee-ca6a-49c3-b846-280dc4c4171e";
+const ESQ={25:"mkpp9415hbc.1280",6:"mkpp9415hbc.12948",26:"mkpp9415hbc.5094",27:"mkpp9415hbc.6977",23:"mkpp9415hbc.8891",29:"mkpp9415hbc.10945"};
 const ESTADOS=["Sin empezar","Esquema","Redactado","De memoria","Pulido"];
 const ESTADOS_AYUDA=["Aún no lo has tocado.","Tienes el índice y la idea que lo vertebra.","Lo has escrito entero con libros delante.","Lo escribes sin libros en el tiempo del examen. Cuenta para el sorteo.","Has hecho un simulacro y ha salido bien."];
 
@@ -455,6 +458,7 @@ function fichaTema(n){
   <div class="seg">${ESTADOS.map((e,i)=>`<button data-est="${i}" class="${t.est===i?"on":""}">${e}</button>`).join("")}</div>
   <p class="pista" id="ayudaEst" style="margin:6px 2px 0">${ESTADOS_AYUDA[t.est]}</p>
   ${L?`<h2 class="sec" style="margin-top:20px">Libros</h2><dl class="libros"><dt>Base</dt><dd>${esc(L[0])}</dd><dt>Apoyo, solo para</dt><dd>${esc(L[1])}</dd><dt>Problemas</dt><dd>${esc(L[2])}</dd></dl>`:`<p class="pista" style="margin-top:16px">Sin libros asignados todavía.</p>`}
+  ${ESQ[n]?`<div class="fila" style="margin-top:14px"><a class="btn sec peq" href="${DOC_ESQ}#${ESQ[n]}" target="_blank" rel="noopener">Abrir esqueleto ↗</a></div>`:""}
   <label class="campo">La idea que lo vertebra, el índice, lo que no puede faltar<textarea id="tNota" placeholder="p. ej. Hilo: de Bolzano a la compacidad. Cierre didáctico: …">${esc(t.nota)}</textarea></label>
   <div class="pista" style="margin-top:10px">${ses?`Llevas <span class="num">${(ses/60).toFixed(1).replace(".",",")}</span> h en este tema.`:""} ${t.rep?`Última vez escrito: ${fmtFecha(t.rep)}.`:""}</div>
   <div class="fila" style="margin-top:16px">

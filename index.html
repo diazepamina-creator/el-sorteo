@@ -304,17 +304,24 @@ function fechaISO(d){const z=n=>String(n).padStart(2,"0");return d.getFullYear()
 function sumaDias(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return fechaISO(d);}
 function difDias(a,b){return Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);}
 
+const REC_INICIAL=[
+  {id:"cutkosky",t:"Rato serio con Cutkosky",d:[0],h:"12:00",min:90,x:"Papel y lápiz, sin móvil. Un ejercicio o una demostración, sin prisa por avanzar."},
+  {id:"estudio",t:"Oposiciones: temas y problemas",d:[0,1,2,3,4],h:"17:00",min:150,x:"El tema de la semana y un problema anotado. Registra el rato en El sorteo."},
+  {id:"entreno",t:"Entrenar",d:[0,2,4],h:"19:45",min:60,x:""},
+  {id:"revision",t:"Revisión del domingo",d:[6],h:"19:00",min:20,x:"Mira la semana en El sorteo y cuéntasela a tu preparador."}
+];
+function recIniciales(){return JSON.parse(JSON.stringify(REC_INICIAL));}
 function estadoInicial(){
   const temas={};
   for(let n=1;n<=TOTAL;n++){temas[n]={sel:!!SEL_INICIAL[n],tipo:SEL_INICIAL[n]==="l"?"l":"s",est:0,rep:null,nota:""};}
-  return {v:1,temas,problemas:[],sesiones:[],simulacros:[],examen:"2027-09-01",meta:14,minSim:120,sellos:{},creado:hoyISO()};
+  return {v:1,temas,rec:recIniciales(),problemas:[],sesiones:[],simulacros:[],examen:"2027-09-01",meta:14,minSim:120,sellos:{},creado:hoyISO()};
 }
 let S;
 function cargar(){
   try{const t=localStorage.getItem(CLAVE); if(t){S=JSON.parse(t);} }catch(e){}
   if(!S||!S.temas){S=estadoInicial();}
   for(let n=1;n<=TOTAL;n++) if(!S.temas[n]) S.temas[n]={sel:false,tipo:"s",est:0,rep:null,nota:""};
-  S.sellos=S.sellos||{}; S.problemas=S.problemas||[]; S.sesiones=S.sesiones||[]; S.simulacros=S.simulacros||[];
+  S.sellos=S.sellos||{}; S.rec=Array.isArray(S.rec)?S.rec:recIniciales(); S.problemas=S.problemas||[]; S.sesiones=S.sesiones||[]; S.simulacros=S.simulacros||[];
 }
 function guardar(){ try{localStorage.setItem(CLAVE,JSON.stringify(S));}catch(e){} revisarSellos(); }
 
@@ -653,6 +660,9 @@ function ajustes(){
   <label class="campo">Meta semanal (horas)<input type="number" id="aM" min="1" max="60" value="${S.meta}"></label>
   <label class="campo">Duración del simulacro (minutos)<input type="number" id="aS" min="30" max="240" step="5" value="${S.minSim}"></label>
   <p class="pista" style="margin-top:8px">El sorteo usa 4 bolas de 71, como en convocatoria ordinaria (RD 276/2007, art. 21.1). Compruébalo en las bases de 2027.</p>
+  <h2 class="sec">Recordatorios</h2>
+  <p class="pista">Mete tus bloques fijos en el calendario del móvil para que te avise.</p>
+  <div class="fila" style="margin-top:8px"><button class="btn sec peq" id="aRec">Recordatorios en el calendario</button></div>
   <h2 class="sec">Copia de seguridad</h2>
   <p class="pista">Tus datos viven solo en este navegador. Exporta de vez en cuando.</p>
   <div class="fila" style="margin-top:8px"><button class="btn sec peq" id="aExp">Exportar</button><label class="btn sec peq" style="cursor:pointer">Importar<input type="file" id="aImp" accept="application/json" hidden></label></div>
@@ -662,9 +672,66 @@ function ajustes(){
   <div class="fila" style="margin-top:8px"><button class="btn peligro peq" id="aCero">Borrar todo</button></div>`);
   bindCerrar();
   $("#aOk").onclick=()=>{S.examen=$("#aF").value||S.examen;S.meta=Math.max(1,+$("#aM").value||14);S.minSim=Math.max(30,+$("#aS").value||120);guardar();cerrar();pintar();};
+  $("#aRec").onclick=()=>recordatorios();
   $("#aCero").onclick=()=>{if(confirm("¿Borrar todos tus datos de El sorteo? No se puede deshacer.")){const m=S.meta,f=S.examen,ms=S.minSim;S=estadoInicial();S.meta=m;S.examen=f;S.minSim=ms;guardar();cerrar();vistaActual="hoy";pintar();toast("Todo a cero");}};
   $("#aExp").onclick=()=>{const b=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="el-sorteo-"+hoyISO()+".json";a.click();};
   $("#aImp").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o.temas)throw 0;if(confirm("¿Sustituir tus datos por los del archivo?")){S=o;guardar();cerrar();pintar();toast("Datos importados");}}catch(x){toast("Ese archivo no es una copia de El sorteo");}});};
+}
+
+
+/* ===================== RECORDATORIOS ===================== */
+const DIAS_C=["L","M","X","J","V","S","D"], DIAS_RR=["MO","TU","WE","TH","FR","SA","SU"];
+function proximaFecha(r){ // primer día (incluido hoy) que cae en uno de sus días
+  const d=new Date(); for(let i=0;i<7;i++){const w=(d.getDay()+6)%7; if(r.d.includes(w))return d; d.setDate(d.getDate()+1);} return new Date();
+}
+function stampLocal(d,hhmm,masMin){const [h,m]=hhmm.split(":").map(Number);const x=new Date(d);x.setHours(h,m+(masMin||0),0,0);
+  const z=n=>String(n).padStart(2,"0");return x.getFullYear()+z(x.getMonth()+1)+z(x.getDate())+"T"+z(x.getHours())+z(x.getMinutes())+"00";}
+function rrule(r){return "RRULE:FREQ=WEEKLY;BYDAY="+r.d.slice().sort().map(i=>DIAS_RR[i]).join(",");}
+function urlGoogle(r){
+  const d=proximaFecha(r);
+  const q=new URLSearchParams({action:"TEMPLATE",text:r.t,dates:stampLocal(d,r.h)+"/"+stampLocal(d,r.h,r.min),ctz:"Europe/Madrid",recur:rrule(r),details:(r.x?r.x+"\n\n":"")+"El sorteo: https://diazepamina-creator.github.io/el-sorteo/"});
+  return "https://calendar.google.com/calendar/render?"+q.toString();
+}
+function icsEsc(t){return String(t).replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/([,;])/g,"\\$1");}
+function ics(lista){
+  const ahora=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  const ev=lista.filter(r=>r.d.length).map(r=>{const d=proximaFecha(r);return ["BEGIN:VEVENT","UID:"+r.id+"-"+Date.now()+"@el-sorteo","DTSTAMP:"+ahora,
+    "DTSTART;TZID=Europe/Madrid:"+stampLocal(d,r.h),"DTEND;TZID=Europe/Madrid:"+stampLocal(d,r.h,r.min),rrule(r),
+    "SUMMARY:"+icsEsc(r.t),"DESCRIPTION:"+icsEsc(r.x||""),"BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(r.t),"TRIGGER:-PT10M","END:VALARM","END:VEVENT"].join("\r\n");});
+  return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//El sorteo//ES","CALSCALE:GREGORIAN",
+    "BEGIN:VTIMEZONE","TZID:Europe/Madrid","BEGIN:DAYLIGHT","TZOFFSETFROM:+0100","TZOFFSETTO:+0200","DTSTART:19700329T020000","RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU","END:DAYLIGHT",
+    "BEGIN:STANDARD","TZOFFSETFROM:+0200","TZOFFSETTO:+0100","DTSTART:19701025T030000","RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU","END:STANDARD","END:VTIMEZONE",
+    ...ev,"END:VCALENDAR"].join("\r\n");
+}
+function recordatorios(){
+  const fila=(r,i)=>`<div class="card pad" style="margin-top:10px" data-ri="${i}">
+    <input type="text" data-k="t" value="${esc(r.t)}" aria-label="Nombre del bloque">
+    <div class="fila" style="margin-top:8px">${DIAS_C.map((c,w)=>`<button class="chip ${r.d.includes(w)?"on":""}" data-dia="${w}" style="min-width:32px;justify-content:center;padding:5px 8px">${c}</button>`).join("")}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <label class="campo">Hora<input type="time" data-k="h" value="${r.h}" style="width:100%;border:1px solid var(--linea);background:var(--papel);border-radius:10px;padding:9px 11px"></label>
+      <label class="campo">Minutos<input type="number" data-k="min" min="10" max="300" step="5" value="${r.min}"></label>
+    </div>
+    <div class="fila" style="margin-top:12px"><a class="btn peq" data-gc href="${urlGoogle(r)}" target="_blank" rel="noopener">Añadir a Google Calendar ↗</a><button class="btn sec peq" data-quita>Quitar</button></div>
+  </div>`;
+  abrir(`<div class="cab"><h3>Recordatorios</h3><button class="cerrar" data-cerrar>×</button></div>
+  <p class="pista">Una web instalada no puede avisarte con la app cerrada, pero tu calendario sí. Cada botón abre Google Calendar con el evento ya repetido cada semana: solo tienes que pulsar <b>Guardar</b> allí. El aviso será el que tengas por defecto en Google Calendar; si lo quieres, cámbialo en el propio evento.</p>
+  <div id="recL">${S.rec.map(fila).join("")}</div>
+  <div class="fila" style="margin-top:14px"><button class="btn sec peq" id="recMas">Añadir un bloque</button><button class="btn sec peq" id="recIcs">Descargar todos (.ics)</button><button class="btn sec peq" id="recDef">Volver a los de serie</button></div>
+  <p class="pista" style="margin-top:10px">El .ics sirve para otros calendarios (Samsung, Outlook, Proton) y trae un aviso 10 minutos antes. Si cambias una hora aquí, borra el evento antiguo del calendario y vuelve a añadirlo.</p>`);
+  bindCerrar();
+  const rehacer=()=>{guardar();recordatorios();};
+  document.querySelectorAll("[data-ri]").forEach(c=>{
+    const r=S.rec[+c.dataset.ri];
+    const gc=c.querySelector("[data-gc]");
+    const act=()=>{guardar();gc.href=urlGoogle(r);gc.style.opacity=r.d.length?1:.4;};
+    c.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{const k=inp.dataset.k;r[k]=k==="min"?Math.max(10,+inp.value||60):(inp.value||r[k]);act();});
+    c.querySelectorAll("[data-dia]").forEach(b=>b.onclick=()=>{const w=+b.dataset.dia;r.d=r.d.includes(w)?r.d.filter(x=>x!==w):[...r.d,w];b.classList.toggle("on");act();});
+    gc.onclick=e=>{if(!r.d.length){e.preventDefault();toast("Elige al menos un día");}};
+    c.querySelector("[data-quita]").onclick=()=>{S.rec.splice(+c.dataset.ri,1);rehacer();};
+  });
+  $("#recMas").onclick=()=>{S.rec.push({id:"b"+Date.now(),t:"Nuevo bloque",d:[0],h:"18:00",min:60,x:""});rehacer();};
+  $("#recDef").onclick=()=>{if(confirm("¿Volver a los cuatro bloques de serie?")){S.rec=recIniciales();rehacer();}};
+  $("#recIcs").onclick=()=>{const b=new Blob([ics(S.rec)],{type:"text/calendar"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="el-sorteo-recordatorios.ics";a.click();};
 }
 
 /* ===================== ARRANQUE ===================== */

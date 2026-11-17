@@ -115,6 +115,16 @@ label.campo > *{margin-top:4px}
 .sello{flex:0 0 auto;width:74px;text-align:center;font-size:.68rem;color:var(--tinta3);line-height:1.2}
 .sello .m{width:52px;height:52px;margin:0 auto 6px;border-radius:50%;border:1.5px dashed var(--linea);display:grid;place-items:center;font-family:var(--serif);font-size:1.1rem;color:var(--tinta3)}
 .sello.si{color:var(--tinta2)}
+.juego{display:grid;gap:8px;margin:4px 0 10px}
+.juego button{display:flex;align-items:center;gap:12px;text-align:left;background:transparent;border:1px solid var(--linea);border-radius:12px;padding:10px 12px;color:var(--tinta)}
+.juego button .caja{flex:0 0 22px;height:22px;border-radius:6px;border:1.5px solid var(--linea);display:grid;place-items:center;font-size:.85rem;color:transparent}
+.juego button.si{border-color:color-mix(in srgb,var(--laton) 55%,transparent)}
+.juego button.si .caja{background:var(--laton);border-color:var(--laton);color:#fff}
+.juego button small{display:block;color:var(--tinta3);font-size:.78rem}
+.semanas{display:flex;gap:5px;align-items:center}
+.semanas i{width:14px;height:14px;border-radius:4px;border:1px solid var(--linea)}
+.semanas i.medio{background:color-mix(in srgb,var(--laton) 40%,transparent);border-color:transparent}
+.semanas i.lleno{background:var(--laton);border-color:var(--laton)}
 .sello.si .m{border:0;background:radial-gradient(circle at 35% 30%,#f7e3a8,#c9a24e 70%,#9c7a2f);color:#3b2c0c;box-shadow:0 3px 8px -3px rgba(0,0,0,.4)}
 .aviso-suave{font-size:.85rem;color:var(--tinta2);background:var(--papel2);border-radius:10px;padding:10px 12px;margin-top:12px}
 .tabla{width:100%;border-collapse:collapse;font-size:.88rem}
@@ -315,14 +325,14 @@ function recIniciales(){return JSON.parse(JSON.stringify(REC_INICIAL));}
 function estadoInicial(){
   const temas={};
   for(let n=1;n<=TOTAL;n++){temas[n]={sel:!!SEL_INICIAL[n],tipo:SEL_INICIAL[n]==="l"?"l":"s",est:0,rep:null,nota:""};}
-  return {v:1,temas,rec:recIniciales(),problemas:[],sesiones:[],simulacros:[],examen:"2027-09-01",meta:14,minSim:120,sellos:{},creado:hoyISO()};
+  return {v:1,temas,rec:recIniciales(),problemas:[],sesiones:[],simulacros:[],examen:"2027-09-01",meta:14,minSim:120,sellos:{},juego:{},creado:hoyISO()};
 }
 let S;
 function cargar(){
   try{const t=localStorage.getItem(CLAVE); if(t){S=JSON.parse(t);} }catch(e){}
   if(!S||!S.temas){S=estadoInicial();}
   for(let n=1;n<=TOTAL;n++) if(!S.temas[n]) S.temas[n]={sel:false,tipo:"s",est:0,rep:null,nota:""};
-  S.sellos=S.sellos||{}; S.rec=Array.isArray(S.rec)?S.rec:recIniciales(); S.problemas=S.problemas||[]; S.sesiones=S.sesiones||[]; S.simulacros=S.simulacros||[];
+  S.sellos=S.sellos||{}; S.rec=Array.isArray(S.rec)?S.rec:recIniciales(); S.problemas=S.problemas||[]; S.sesiones=S.sesiones||[]; S.simulacros=S.simulacros||[]; S.juego=S.juego||{};
 }
 function guardar(){ try{localStorage.setItem(CLAVE,JSON.stringify(S));}catch(e){} revisarSellos(); }
 
@@ -334,6 +344,12 @@ const listos=()=>Object.keys(S.temas).filter(n=>S.temas[n].est>=3).map(Number);
 const elegidos=()=>Object.keys(S.temas).filter(n=>S.temas[n].sel).map(Number).sort((a,b)=>a-b);
 const pct=x=>Math.round(x*100)+" %";
 function inicioSemana(){const d=new Date();const w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return fechaISO(d);}
+/* El juego: cada semana, un problema que rete y el rato de Cutkosky (decidido con la hoja de TRIZ del 17/11/2026) */
+const JUEGO=[["reto","Problema de la semana","Uno difícil que te rete (Andreescu, Deimos…). Cuenta como horas de oposición."],
+             ["cutkosky","Rato de Cutkosky","Hueco fijo y acotado: lunes tras las clases o domingo."]];
+function semanaJuego(ini){return (S.juego&&S.juego[ini])||{};}
+function semanaJuegoLlena(ini){const s=semanaJuego(ini);return JUEGO.every(([k])=>s[k]);}
+function rachaJuego(){let n=0,ini=inicioSemana();if(!semanaJuegoLlena(ini))ini=sumaDias(ini,-7);while(semanaJuegoLlena(ini)){n++;ini=sumaDias(ini,-7);}return n;}
 function minutosSemana(){const i=inicioSemana();return S.sesiones.filter(s=>s.d>=i).reduce((a,s)=>a+(+s.min||0),0);}
 function problemasPendientes(){const h=hoyISO();return S.problemas.filter(p=>p.prox&&p.prox<=h).sort((a,b)=>a.prox<b.prox?-1:1);}
 function paraRefrescar(){
@@ -355,9 +371,11 @@ const SELLOS=[
 ["p50","50 problemas",()=>S.problemas.length>=50,"50"],
 ["p100","100 problemas",()=>S.problemas.length>=100,"C"],
 ["sem","Semana cumplida",()=>minutosSemana()>=S.meta*60,"✓"],
-["rep","Primer problema rehecho",()=>S.problemas.some(p=>(p.hist||[]).length>=2),"↻"]
+["rep","Primer problema rehecho",()=>S.problemas.some(p=>(p.hist||[]).length>=2),"↻"],
+["juego","En el juego",()=>semanaJuegoLlena(inicioSemana()),"♞"],
+["juego4","Cuatro semanas en el juego",()=>rachaJuego()>=4,"IV"]
 ];
-const SELLOS_HISTORICOS=["sem"]; /* la semana cumplida queda ganada aunque cambie la semana */
+const SELLOS_HISTORICOS=["sem","juego","juego4"]; /* la semana cumplida queda ganada aunque cambie la semana */
 function revisarSellos(){
   let nuevo=null;
   for(const [id,nom,f] of SELLOS){
@@ -412,6 +430,13 @@ function vHoy(){
     <div class="pista">${minS>=meta?"Semana cumplida. Lo demás es propina.":"Sin prisa: cuenta lo que hagas, no lo que falte."}</div>
   </div>
 
+  <h2 class="sec">El juego<span>${rachaJuego()?`${rachaJuego()} semana${rachaJuego()===1?"":"s"} seguida${rachaJuego()===1?"":"s"}`:"esta semana"}</span></h2>
+  <div class="card pad">
+    <div class="juego">${JUEGO.map(([k,n,d])=>`<button data-juego="${k}" class="${semanaJuego(inicioSemana())[k]?"si":""}"><span class="caja">✓</span><span><b>${n}</b><small>${d}</small></span></button>`).join("")}</div>
+    <div class="cifras"><div class="semanas" aria-label="Últimas ocho semanas">${[7,6,5,4,3,2,1,0].map(w=>{const s=semanaJuego(sumaDias(inicioSemana(),-7*w));const c=JUEGO.filter(([k])=>s[k]).length;return `<i class="${c===2?"lleno":c===1?"medio":""}" title="${w?`hace ${w} sem.`:"esta semana"}"></i>`;}).join("")}</div>
+    <div class="pista">${semanaJuegoLlena(inicioSemana())?"Esta semana estás en el juego.":"Márcalo al hacerlo."}</div></div>
+  </div>
+
   ${refr.length?`<h2 class="sec">Para refrescar<span>temas que llevas tiempo sin escribir</span></h2>
   <div class="lista">${refr.map(x=>itemTema(x.n)).join("")}</div>`:""}
 
@@ -422,6 +447,7 @@ function vHoy(){
   <div class="sellos">${SELLOS.map(([id,nom,,m])=>`<div class="sello ${S.sellos[id]?"si":""}"><div class="m">${m}</div>${nom}</div>`).join("")}</div>
   <div style="height:20px"></div>`;
   $("#bRato").onclick=()=>registrarRato();
+  document.querySelectorAll("[data-juego]").forEach(b=>b.onclick=()=>{const ini=inicioSemana();S.juego[ini]=S.juego[ini]||{};S.juego[ini][b.dataset.juego]=!S.juego[ini][b.dataset.juego];guardar();vHoy();});
   enlazarItems();
 }
 function frase(){
